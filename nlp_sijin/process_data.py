@@ -6,18 +6,20 @@ import platform
 
 
 def load_data():
-    train = _parse_data(open('data/train_data_e.data', 'rb'))
+    # train = _parse_data(open('data/train_data_e.data', 'rb'))
+    train = _parse_data(open('data/data_b.data', 'rb'))
     test = _parse_data(open('data/test_data_e.data', 'rb'))
-    print ("train", train)
+    print("train", train)
     word_counts = Counter(row[0].lower() for sample in train for row in sample)
-    vocab = [w for w, f in iter(word_counts.items()) if f >= 2]
+    vocab = [w for w, f in iter(word_counts.items()) if f >= 2]  # 筛选出频率不止一次的字
+    # TODO 能保证多次运行vocab的顺序是一样的吗
     chunk_tags = ['O', 'B-EI', 'I-EI', 'B-EO', 'I-EO', 'B-EQ', 'I-EQ', 'B-ILF', 'I-ILF', 'B-EIF', 'I-EIF']
 
     # save initial config data
     with open('model/config.pkl', 'wb') as outp:
         pickle.dump((vocab, chunk_tags), outp)
 
-    train = _process_data(train, vocab, chunk_tags)
+    train = _process_data(train, vocab, chunk_tags,maxlen=218)
     test = _process_data(test, vocab, chunk_tags)
     return train, test, (vocab, chunk_tags)
 
@@ -32,9 +34,9 @@ def _parse_data(fh):
         split_text = '\n'
 
     string = fh.read().decode('utf-8')
-    #data = [[row.split() for row in sample.split(split_text)] for
-            #sample in
-            #string.strip().split(split_text + split_text)]
+    # data = [[row.split() for row in sample.split(split_text)] for
+    # sample in
+    # string.strip().split(split_text + split_text)]
     data = []
     for sample in string.strip().split(']'):
         data_tmp = []
@@ -50,9 +52,10 @@ def _parse_data(fh):
 def _process_data(data, vocab, chunk_tags, maxlen=None, onehot=False):
     if maxlen is None:
         maxlen = max(len(s) for s in data)
+        print("maxlen=",maxlen)
     word2idx = dict((w, i) for i, w in enumerate(vocab))
     x = [[word2idx.get(w[0].lower(), 1) for w in s] for s in data]  # set to <unk> (index 1) if not in vocab
-
+    # TODO 为什么word2idx查询不到时用1？
     y_chunk = [[chunk_tags.index(w[1]) for w in s] for s in data]
 
     x = pad_sequences(x, maxlen)  # left padding
