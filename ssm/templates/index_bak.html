@@ -1,0 +1,112 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <link href="/static/css/fileinput.min.css" media="all" rel="stylesheet" type="text/css" />
+        <script src="https://cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>
+        <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <script src="/static/js/fileinput.min.js"></script>
+        <script src="/static/js/locales/zh.js"></script>
+        <style>
+        body
+        {
+            width: 50%;
+            position: absolute;
+            top: 25%;
+            left: 25%;
+        }
+        </style>
+        <title>预测</title>
+        
+    </head>
+
+    <script>
+        $(document).on("ready", function() {
+            $("#file_input").fileinput({
+                language: 'zh',
+                uploadUrl: "/api/uploads",
+                allowedFileExtensions: ['xlsx', 'pdf', 'docx'],//接收的文件后缀
+                showUpload: true, //是否显示上传按钮
+                showCaption: false,//是否显示标题
+                browseClass: "btn btn-primary", //按钮样式     
+                //dropZoneEnabled: false,//是否显示拖拽区域
+                //minImageWidth: 50, //图片的最小宽度
+                //minImageHeight: 50,//图片的最小高度
+                //maxImageWidth: 1000,//图片的最大宽度
+                //maxImageHeight: 1000,//图片的最大高度
+                //maxFileSize: 0,//单位为kb，如果为0表示不限制文件大小
+                //minFileCount: 0,
+                maxFileCount: 10, //表示允许同时上传的最大文件个数
+                enctype: 'multipart/form-data',
+                validateInitialCount:true,
+                previewFileIcon: "<i class='glyphicon glyphicon-king'></i>",
+                msgFilesTooMany: "选择上传的文件数量({n}) 超过允许的最大数值{m}！",
+            }).on("fileuploaded", function(event, data) {
+                console.log(data);
+                preds = data.response;
+                $("#result tbody").empty();
+                for(var i = 0;i < preds.length;i++) {
+                    $("#result tbody").append("<tr><td>" + preds[i].count_item + "</td><td>" + preds[i].count_class + "</td><td>"
+                    + preds[i].count_ufp + "</td><td>" + preds[i].count_reuse + "</td><td>" + preds[i].count_modified + "</td><td>"
+                    + preds[i].count_us + "</td><td>" + preds[i].count_remark + "</td></tr>")
+                }
+            });
+        });
+    </script>
+
+    
+    <body>
+        <div class="content">
+            <!-- Button trigger modal -->
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+          智能估算
+        </button>
+         
+        <!-- Modal -->
+        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <div class="file-loading">
+                  <input id="file_input" name="file_input" type="file"'>
+                </div>
+                <div id="kartik-file-errors"></div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" title="Your custom upload logic">Save</button>
+              </div>
+            </div>
+          </div>
+        </div>
+          
+        <table id="result" class="table table-striped">
+            <caption>预测结果</caption>
+            <thead>
+                <tr>
+                    <th>计数项</th>
+                    <th>类别</th>
+                    <th>UFP</th>
+                    <th>重用度</th>
+                    <th>修改类型</th>
+                    <th>US</th>
+                    <th>备注</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>制定,调查,问卷,信息,包括,投票,主题,时间,调研,题目,信息</td>
+                    <td>ILF</td>
+                </tr>
+            </tbody>
+        </table>
+            
+        </div>
+    </body>
+</html>
