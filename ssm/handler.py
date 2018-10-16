@@ -6,33 +6,33 @@ from pdfminer.pdfparser import PDFParser, PDFDocument
 import pandas as pd
 import re
 
+
 def pdf_extract(in_file):
     content = ''
     res = ''
     parser_pdf = PDFParser(in_file)
     doc = PDFDocument()
-    
+
     parser_pdf.set_document(doc)
     doc.set_parser(parser_pdf)
-    
+
     doc.initialize()
     if not doc.is_extractable:
         raise PDFTextExtractionNotAllowed
     else:
         # 创建PDf资源管理器 来管理共享资源
         rsrcmgr = PDFResourceManager()
-        
+
         # 创建一个PDF参数分析器
         laparams = LAParams()
-        
+
         # 创建聚合器
         device = PDFPageAggregator(rsrcmgr, laparams=laparams)
-        
+
         # 创建一个PDF页面解释器对象
         interpreter = PDFPageInterpreter(rsrcmgr, device)
-        
+
         # ot = doc.get_outlines()
-        
 
         # 循环遍历列表，每次处理一页的内容
         # doc.get_pages() 获取page列表
@@ -60,7 +60,7 @@ def excel_extract(in_file):
     try:
         df = pd.read_excel(in_file, usecols=[7])
         # print(df)
-        for index,row in df.iterrows():
+        for index, row in df.iterrows():
             if pd.notnull(row['功能单元描述']):
                 sentence = row['功能单元描述'].strip()
                 sentence = re.sub("[\s+\.\!\/_,$%^*(+\"\']+|[+——！“”，。：？、~@#￥%……&*（）]+", "", sentence)
@@ -69,6 +69,24 @@ def excel_extract(in_file):
         print('open file faild!')
         print(e)
 
+    return inp
+
+
+def excel_extract_v2(in_file):
+    inp = []
+    try:
+        df = pd.read_excel(in_file)
+        # print("read excel:")
+        # print(df)
+        for index, row in df.iterrows():
+            if pd.notnull(row['功能单元描述']):
+                sentence = row['功能单元描述'].strip()
+                sentence = re.sub("[\s+\.\!\/_,$%^*(+\"\']+|[+——！“”，。：？、~@#￥%……&*（）]+", "", sentence)
+                inp.append(sentence)
+    except Exception as e:
+        print('open file failed!')
+        print(e)
+    # print(inp)
     return inp
 
 

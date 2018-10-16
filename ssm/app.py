@@ -30,15 +30,40 @@ def predict():
 def upload_page():
     return render_template("upload.html")    
 
+# @app.route('/api/uploads', methods = ['GET', 'POST'])
+# def uploads():
+#     if request.method == 'POST':
+#         file = request.files['file_input']
+#         filename = secure_filename(file.filename)
+#         if file:
+#             f, typ = os.path.splitext(filename)
+#             if typ == '.xlsx':
+#                 inp = handler.excel_extract(file)
+#                 sentences = [models.cut_sentence(item) for item in inp]
+#                 x = models.predict_preprocess(sentences)
+#                 tags = models.predict_class(x)
+#                 count_items = crfSubprocess.crf_predict(sentences, tags)
+#                 genFileName = uuid.uuid4().hex
+#                 df = pandas.DataFrame({'count_item': count_items, 'count_class': tags})
+#                 df.to_csv(current_app.config['UPLOAD_FOLDER'] + '/' + genFileName, index=True, index_label='id', sep=',')
+#                 return jsonify(genFileName)
+#             elif typ == '.pdf':
+#                 c, res = handler.pdf_extract(file)
+#                 with open(current_app.config['UPLOAD_FOLDER'] + '/' + str(time.time()*1000), 'wb') as f:
+#                     f.write(c.encode('utf-8'))
+#             # file.save(os.path.join(current_app.config['UPLOAD_FOLDER'], filename))
+#         return jsonify('3e0d0b8a9e094980bbdda4f834ded09a')
+#     return render_template('index.html')
+
 @app.route('/api/uploads', methods = ['GET', 'POST'])
-def uploads():
+def uploads_v2():
     if request.method == 'POST':
         file = request.files['file_input']
         filename = secure_filename(file.filename)
         if file:
             f, typ = os.path.splitext(filename)
             if typ == '.xlsx':
-                inp = handler.excel_extract(file)
+                inp = handler.excel_extract_v2(file)
                 sentences = [models.cut_sentence(item) for item in inp]
                 x = models.predict_preprocess(sentences)
                 tags = models.predict_class(x)
@@ -54,7 +79,7 @@ def uploads():
             # file.save(os.path.join(current_app.config['UPLOAD_FOLDER'], filename))
         return jsonify('3e0d0b8a9e094980bbdda4f834ded09a')
     return render_template('index.html')
-    
+
 @app.route("/api/predict", methods=["GET", "POST"])
 def api_predict():
     '''
@@ -123,4 +148,4 @@ def edit_data():
     return jsonify({})
 
 if __name__ == "__main__":
-    app.run(debug=False, host='0.0.0.0', port=8888)
+    app.run(debug=True, host='0.0.0.0', port=8888)
