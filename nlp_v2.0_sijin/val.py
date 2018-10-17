@@ -57,11 +57,11 @@ with open('实验/summary_2.txt', 'r', encoding='utf-8', errors='ignore') as inf
                     if t in ('B-EIF', 'I-EIF'):
                         EIF += ' ' + s if (t == 'B-EIF') else s
                         flag = 'EIF'
-                bc = np.bincount(result_tags)
+                bc = np.bincount(result)
                 if bc[0] == length:
                     flag2='' #全是O
                 else:
-                    flag2 = chunk_tags[np.argmax(np.bincount(result_tags[1:]))+1]
+                    flag2 = chunk_tags[np.argmax(bc[1:])+1]
                 print("result_tags:", flag)
                 if flag == label:
                     count_num += 1
