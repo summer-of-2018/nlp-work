@@ -4,6 +4,7 @@ import numpy as np
 
 model, (vocab, chunk_tags) = bilsm_crf_model.create_model(train=False)
 count_num = 0
+count_num2 = 0
 sum_num = 0
 EI_count = 0
 EO_count = 0
@@ -56,9 +57,16 @@ with open('实验/summary_2.txt', 'r', encoding='utf-8', errors='ignore') as inf
                     if t in ('B-EIF', 'I-EIF'):
                         EIF += ' ' + s if (t == 'B-EIF') else s
                         flag = 'EIF'
+                bc = np.bincount(result_tags)
+                if bc[0] == length:
+                    flag2='' #全是O
+                else:
+                    flag2 = chunk_tags[np.argmax(np.bincount(result_tags[1:]))+1]
                 print("result_tags:", flag)
                 if flag == label:
                     count_num += 1
+                if flag2 == label:
+                    count_num2 += 1
                 if flag == 'EI':
                     EI_count += 1
                 elif flag == 'EO':
@@ -89,6 +97,7 @@ with open('实验/summary_2.txt', 'r', encoding='utf-8', errors='ignore') as inf
                 outf.write("\n")
     outf.close()
 print ("count_num", count_num)
+print ("count_num2", count_num2)
 print ("sum_num", sum_num)
 print ("EI_count", EI_count)
 print ("EO_count", EO_count)
