@@ -82,8 +82,31 @@ def uploads_v2():
     return render_template('index.html')
 
 
+# @app.route("/api/predict", methods=["GET", "POST"])
+# def api_predict():
+#     '''
+#     def test():
+#         data = {}
+#         data['input'] = '["HOW AFRICAN AMERICANS WERE IMMIGRATED TO THE US"]'
+#         r = requests.post('http://127.0.0.1:5000/api/predict', data=data)
+#         print r.text
+#     '''
+#     if request.method == 'POST':
+#         print(request.form['input'])
+#         inp = request.form['input'].strip()
+#         sentence = []
+#         sentence.append(models.cut_sentence(inp))
+#         print(sentence)
+#         x = models.predict_preprocess(sentence)
+#         pred = models.predict_class(x)
+#         print(pred)
+#         res = {'sentence': sentence, 'predict': pred[0]}
+#         return jsonify(res)
+#     return render_template('index.html')
+
+
 @app.route("/api/predict", methods=["GET", "POST"])
-def api_predict():
+def api_predict_v2():
     '''
     def test():
         data = {}
@@ -94,15 +117,11 @@ def api_predict():
     if request.method == 'POST':
         print(request.form['input'])
         inp = request.form['input'].strip()
-        sentence = []
-        sentence.append(models.cut_sentence(inp))
-        print(sentence)
-        x = models.predict_preprocess(sentence)
-        pred = models.predict_class(x)
-        print(pred)
-        res = {'sentence': sentence, 'predict': pred[0]}
+        tags, count_items = bilsm_crf_model.predict_sentences([inp])
+        res = {'sentence': [i.strip().split(' ') for i in count_items], 'predict': tags[0]}
         return jsonify(res)
     return render_template('index.html')
+
 
 @app.route("/api/getData", methods=["GET", "POST"])
 def get_data():
@@ -150,4 +169,4 @@ def edit_data():
     return jsonify({})
 
 if __name__ == "__main__":
-    app.run(debug=True, host='0.0.0.0', port=8888)
+    app.run(debug=False, host='0.0.0.0', port=8888)

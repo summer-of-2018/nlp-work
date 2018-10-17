@@ -3,7 +3,7 @@ from typing import List
 from keras.models import Sequential
 from keras.layers import Embedding, Bidirectional, LSTM
 from keras_contrib.layers import CRF
-import process_data
+import tensorflow as tf
 import pickle
 import numpy as np
 
@@ -26,6 +26,10 @@ def create_model():
 
 
 model, (vocab, chunk_tags) = create_model()
+model.load_weights(MODEL_PATH + 'crf.h5')
+graph = tf.get_default_graph()
+
+print("Swithin: finish loading model")
 word2idx = dict((w, i) for i, w in enumerate(vocab))
 
 
@@ -39,38 +43,40 @@ def process_sentence(data, maxlen=100):
 
 
 def predict_sentences(sentences):
-    tags = []
+    tags = []  # type: List[str]
     count_items = []  # type: List[str]
-    for predict_text in sentences:
-        senten_vec, length = process_sentence(predict_text)
-        model.load_weights(MODEL_PATH + 'crf.h5')
-        raw = model.predict(senten_vec)[0]  # [-length:]
-        result = [np.argmax(row) for row in raw]
-        # chunk_tags = ['O', 'B-EI', 'I-EI', 'B-EO', 'I-EO', 'B-EQ', 'I-EQ', 'B-ILF', 'I-ILF', 'B-EIF', 'I-EIF']
-        # result_tags = [chunk_tags[i] for i in result]
-        # EI, EO, EQ, ILF, EIF = '', '', '', '', ''
-        _count_items = {'EI': '', 'EO': '', 'EQ': '', 'ILF': '', 'EIF': '', '-': '-'}
-        flag = '-'
-        for s, t in zip(predict_text, result):
-            if t == 0:
-                continue
-            if t in {1, 2}:  # ('B-EI', 'I-EI')
-                flag = 'EI'
-            elif t in {3, 4}:  # ('B-EO', 'I-EO')
-                flag = 'EO'
-            elif t in {5, 6}:  # ('B-EQ', 'I-EQ')
-                flag = 'EQ'
-            elif t in {7, 8}:  # ('B-ILF', 'I-ILF')
-                flag = 'ILF'
-            elif t in {9, 10}:  # ('B-EIF', 'I-EIF')
-                flag = 'EIF'
-            if t in {1, 3, 5, 7, 9}:
-                _count_items[flag] += ' '
-            _count_items[flag] += s
-        print("result_tags:", flag)
-        print(_count_items)
-        tags.append(flag)
-        count_items.append(_count_items[flag])
+    global graph
+    with graph.as_default():
+        for predict_text in sentences:
+            senten_vec, length = process_sentence(predict_text)
+            model.load_weights(MODEL_PATH + 'crf.h5')
+            raw = model.predict(senten_vec)[0]  # [-length:]
+            result = [np.argmax(row) for row in raw]
+            # chunk_tags = ['O', 'B-EI', 'I-EI', 'B-EO', 'I-EO', 'B-EQ', 'I-EQ', 'B-ILF', 'I-ILF', 'B-EIF', 'I-EIF']
+            # result_tags = [chunk_tags[i] for i in result]
+            # EI, EO, EQ, ILF, EIF = '', '', '', '', ''
+            _count_items = {'EI': '', 'EO': '', 'EQ': '', 'ILF': '', 'EIF': '', '-': '-'}
+            flag = '-'
+            for s, t in zip(predict_text, result):
+                if t == 0:
+                    continue
+                if t in {1, 2}:  # ('B-EI', 'I-EI')
+                    flag = 'EI'
+                elif t in {3, 4}:  # ('B-EO', 'I-EO')
+                    flag = 'EO'
+                elif t in {5, 6}:  # ('B-EQ', 'I-EQ')
+                    flag = 'EQ'
+                elif t in {7, 8}:  # ('B-ILF', 'I-ILF')
+                    flag = 'ILF'
+                elif t in {9, 10}:  # ('B-EIF', 'I-EIF')
+                    flag = 'EIF'
+                if t in {1, 3, 5, 7, 9}:
+                    _count_items[flag] += ' '
+                _count_items[flag] += s
+            print("result_tags:", flag)
+            print(_count_items)
+            tags.append(flag)
+            count_items.append(_count_items[flag])
     return tags, count_items
 
 
