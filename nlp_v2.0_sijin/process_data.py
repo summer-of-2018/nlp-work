@@ -70,7 +70,7 @@ def process_data(data, vocab, maxlen=100):
     word2idx = dict((w, i) for i, w in enumerate(vocab))
     x = [word2idx.get(w[0].lower(), 1) for w in data]
     length = len(x)
-    x = pad_sequences([x], maxlen)  # left padding
+    # x = pad_sequences([x], maxlen)  # left padding
     # x = [x]
     x = np.array([x])
 
