@@ -47,6 +47,7 @@ def runCRF(input_file):
 
 def crf_predict(sentences, pred_class):
     # inf is a map sentences and tags
+    # 返回计数项字符串列表
     with open(TEMP_FILE, 'wb') as fp:
         buf = ''
         for i in range(0, len(sentences)):

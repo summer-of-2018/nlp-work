@@ -5,7 +5,6 @@ import numpy as np
 from keras.preprocessing.sequence import pad_sequences
 from keras.utils import to_categorical
 import pandas as pd
-import numpy as np
 import tensorflow as tf
 from keras.models import Model, load_model, Sequential
 import crfSubprocess
@@ -59,7 +58,8 @@ print('load done')
 def cut_sentence(sentence, filter_words=FILTER_WORDS):
     words = jieba.cut(sentence)
     return [word for word in words if (word not in stopwords and word not in filter_words)]
-   
+
+
 def predict_preprocess(words_list):
     x = []
     for words in words_list:
@@ -100,7 +100,9 @@ def predict_class_with_mult_model(x):
     
     return pred
 
+
 def predict_class_with_merged_model(x):
+    # 返回预测类别的列表
     global graph
     with graph.as_default():
         print(x)
@@ -109,9 +111,11 @@ def predict_class_with_merged_model(x):
     
     return pred
 
+
 def predict_class(x):
     return predict_class_with_merged_model(x)
-    
+
+
 if __name__ == '__main__':
     inp = '制定调查问卷信息，包括投票主题、时间、调研题目等信息'
     tag = 'EIF'

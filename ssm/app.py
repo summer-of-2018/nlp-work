@@ -8,9 +8,9 @@ import time
 import codecs
 import uuid
 import models
-# models = []
 import crfSubprocess
 import pandas
+import bilsm_crf_model
 
 app = Flask(__name__)
 bootstrap = Bootstrap(app)
@@ -18,14 +18,17 @@ bootstrap = Bootstrap(app)
 app.config.from_object("config")
 app.config['UPLOAD_FOLDER'] = './static/uploads'
 
+
 @app.route("/", methods=["GET", "POST"])
 def search():
     return render_template("pageTable.html")
 
+
 @app.route("/predict", methods=["GET", "POST"])
 def predict():
     return render_template("predict.html")    
-    
+
+
 @app.route("/upload", methods=["GET", "POST"])
 def upload_page():
     return render_template("upload.html")    
@@ -38,11 +41,11 @@ def upload_page():
 #         if file:
 #             f, typ = os.path.splitext(filename)
 #             if typ == '.xlsx':
-#                 inp = handler.excel_extract(file)
+#                 inp = handler.excel_extract(file)  # 句子的字符串列表
 #                 sentences = [models.cut_sentence(item) for item in inp]
 #                 x = models.predict_preprocess(sentences)
-#                 tags = models.predict_class(x)
-#                 count_items = crfSubprocess.crf_predict(sentences, tags)
+#                 tags = models.predict_class(x)  # 预测类别的列表
+#                 count_items = crfSubprocess.crf_predict(sentences, tags)  # 计数项字符串列表
 #                 genFileName = uuid.uuid4().hex
 #                 df = pandas.DataFrame({'count_item': count_items, 'count_class': tags})
 #                 df.to_csv(current_app.config['UPLOAD_FOLDER'] + '/' + genFileName, index=True, index_label='id', sep=',')
@@ -64,11 +67,8 @@ def uploads_v2():
         if file:
             f, typ = os.path.splitext(filename)
             if typ == '.xlsx':
-                inp = handler.excel_extract_v2(file)
-                sentences = [models.cut_sentence(item) for item in inp]
-                x = models.predict_preprocess(sentences)
-                tags = models.predict_class(x)
-                count_items = crfSubprocess.crf_predict(sentences, tags)
+                sentences = handler.excel_extract_v2(file)  # 句子的字符串列表
+                tags, count_items = bilsm_crf_model.predict_sentences(sentences)
                 genFileName = uuid.uuid4().hex
                 df = pandas.DataFrame({'count_item': count_items, 'count_class': tags})
                 df.to_csv(current_app.config['UPLOAD_FOLDER'] + '/' + genFileName, index=True, index_label='id', sep=',')
