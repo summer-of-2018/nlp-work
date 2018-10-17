@@ -1,4 +1,4 @@
-import numpy
+import numpy as np
 from collections import Counter
 from keras.preprocessing.sequence import pad_sequences
 import pickle
@@ -60,9 +60,9 @@ def _process_data(data, vocab, chunk_tags, maxlen=None, onehot=False):
     y_chunk = pad_sequences(y_chunk, maxlen, value=-1)
 
     if onehot:
-        y_chunk = numpy.eye(len(chunk_tags), dtype='float32')[y_chunk]
+        y_chunk = np.eye(len(chunk_tags), dtype='float32')[y_chunk]
     else:
-        y_chunk = numpy.expand_dims(y_chunk, 2)
+        y_chunk = np.expand_dims(y_chunk, 2)
     return x, y_chunk
 
 
@@ -70,6 +70,8 @@ def process_data(data, vocab, maxlen=100):
     word2idx = dict((w, i) for i, w in enumerate(vocab))
     x = [word2idx.get(w[0].lower(), 1) for w in data]
     length = len(x)
-    # x = pad_sequences([x], maxlen)  # left padding
-    x = [x]
+    x = pad_sequences([x], maxlen)  # left padding
+    # x = [x]
+    x = np.array([x])
+
     return x, length

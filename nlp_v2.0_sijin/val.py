@@ -35,7 +35,7 @@ with open('实验/summary_2.txt', 'r', encoding='utf-8', errors='ignore') as inf
                 predict_text = dec
                 str, length = process_data.process_data(predict_text, vocab)
                 model.load_weights('model/crf.h5')
-                raw = model.predict(str)[0][-length:]
+                raw = model.predict(str)[0] #[-length:]
                 result = [np.argmax(row) for row in raw]
                 result_tags = [chunk_tags[i] for i in result]
                 EI, EO, EQ, ILF, EIF = '', '', '', '', ''
