@@ -55,6 +55,7 @@ def upload_page():
 #         return jsonify('3e0d0b8a9e094980bbdda4f834ded09a')
 #     return render_template('index.html')
 
+
 @app.route('/api/uploads', methods = ['GET', 'POST'])
 def uploads_v2():
     if request.method == 'POST':
@@ -79,6 +80,7 @@ def uploads_v2():
             # file.save(os.path.join(current_app.config['UPLOAD_FOLDER'], filename))
         return jsonify('3e0d0b8a9e094980bbdda4f834ded09a')
     return render_template('index.html')
+
 
 @app.route("/api/predict", methods=["GET", "POST"])
 def api_predict():
