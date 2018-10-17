@@ -61,8 +61,9 @@ with open('实验/summary_2.txt', 'r', encoding='utf-8', errors='ignore') as inf
                 if bc[0] == length:
                     flag2='' #全是O
                 else:
-                    flag2 = chunk_tags[np.argmax(bc[1:])+1]
+                    flag2 = chunk_tags[np.argmax(bc[1:])+1].split("-")[1]
                 print("result_tags:", flag)
+                print("result_tags2:", flag2)
                 if flag == label:
                     count_num += 1
                 if flag2 == label:
