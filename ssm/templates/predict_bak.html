@@ -1,0 +1,65 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">  
+        <script src="https://cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>
+        <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <style>
+        body
+        {
+            width: 50%;
+            position: absolute;
+            top: 25%;
+            left: 25%;
+        }
+        </style>
+        <title>预测</title>
+        
+    </head>
+
+    <script>
+        $(function() { 
+		$("#fat-btn").click(function(){
+			$(this).button('loading');
+            // $("#result").empty();
+            $("#result").show();
+            $.post("/api/predict", {"input": $("form textarea").val()},
+                function(data) {
+                    console.log(data);
+                    $("#result tbody").append("<tr><td>" + data.sentence + "</td><td>" + data.predict + "</td></tr>");
+                    $("#fat-btn").button("reset");
+                }, "json");
+		});
+        });  
+    </script>
+
+    
+    <body>
+        <div class="content">
+            <form role="form">
+                <div class="form-group">
+                    <label for="name">输入</label>
+                    <textarea class="form-control" rows="3"></textarea>
+                </div>
+                <button id="fat-btn" class="btn btn-primary" data-loading-text="Loading..." type="button">预测</button>
+            </form>
+          
+            <table id="result" class="table table-striped">
+                <caption>预测结果</caption>
+                <thead>
+                    <tr>
+                        <th>分词</th>
+                        <th>类别</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>制定,调查,问卷,信息,包括,投票,主题,时间,调研,题目,信息</td>
+                        <td>ILF</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+        </div>
+    </body>
+</html>

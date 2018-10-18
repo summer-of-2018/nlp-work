@@ -1,0 +1,165 @@
+/* 登录页 */
+.login-wallpaper {
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    z-index: -1;
+    position: fixed;
+    background-image: url('/static/image/login.jpg');
+    background-size: cover;
+    -webkit-background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-attachment: fixed;
+    background-color: #3c4652;
+}
+
+.log-input {
+    height: 40px;
+}
+
+.btn-login {
+    display: block;
+    background-color: #25c6ff;
+    width: 100%;
+    border: none;
+    border-radius: 4px;
+    height: 40px;
+    color: #fff;
+    font-weight: bold;
+}
+
+.login-form {
+    animation: flash 1s ease-out 0.2s;
+    animation-fill-mode: backwards;
+    padding: 0 75px;
+    width: 500px;
+    height: 500px;
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    margin-left: -250px;
+}
+
+@keyframes flash {
+    0% {
+        opacity: 0;
+        transform: translateY(100px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0)
+    }
+}
+
+/* 首页 */
+.manage {
+    width: 60%;
+    margin-top: 100px;
+}
+
+.tab-head {
+    font-size: 16px;
+    font-style: italic;
+}
+
+.tab-cont {
+    font-size: 16px;
+    line-height: 33.3px
+}
+
+.tab-head .col-md-3 {
+    width: 20%;
+}
+
+.tab-cont .col-md-3 {
+    width: 20%;
+}
+.manage .row {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #ebeef5;
+}
+
+.username {
+    font-size: 24px;
+    color: #959fa3;
+}
+
+.logout {
+    border: 1px soli #25c6ff;
+    border-radius: 15px;
+    background-color:#25c6ff;
+    padding: 5px 13px;
+    margin-left: 2em;
+    color: #fff;
+}
+
+.logout:hover {
+    text-decoration: none;
+    color: #fff;
+}
+
+
+
+
+/* 搜索框 */
+.search-form {
+    width: 640px;
+    height: 38px;
+    margin: 10px auto 20px auto;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-left: -320px;
+}
+
+.search-input {
+    font-size: 18px;
+    height: 40px;
+    line-height: 40px;
+    width: 489px;
+    border: 1px solid #959fa3;
+    text-indent: 3px;
+    padding-left: 42px;
+    background-image: url(/static/image/search.png);
+    background-repeat: no-repeat;
+    background-position: left;
+    float: left;
+}
+
+.search-btn {
+    width: 107px;
+    height: 40px;
+    line-height: 40px;
+    border: none;
+    background-color: #25c6ff;
+    cursor: pointer;
+    display: inline-block;
+    color: #FFF;
+    text-align: center;
+    font-size: 16px;
+    float: left;
+}
+
+#result {
+    width: 700px;
+    margin: 100px 60px;
+}
+
+.result {
+   border-bottom: 1px solid #959fa3;
+   padding: 30px;
+}
+
+.num {
+    text-align: center;
+    width: 25px;
+    height: 25px;
+    padding: 3px 4px;
+    background-color: grey;
+    border-radius: 50%;
+    font-size: 18px;
+}
