@@ -1,0 +1,206 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% block title %}智能估算{% endblock %}
+
+{% block content_header %}
+<h1>智能估算</h1>
+{% endblock %}
+
+{% block content_container %}
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+  智能估算
+</button>
+ 
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="file-loading">
+          <input id="file_input" name="file_input" type="file">
+        </div>
+        <div id="kartik-file-errors"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+<table id="table"
+    data-toolbar="#toolbar"
+    data-show-refresh="true"
+    data-show-columns="true"
+    data-minimum-count-columns="2"
+    data-id-field="id"
+    data-show-footer="false"
+></table>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    var queryFileName = "init";
+    var oTable;
+    var $table = $('#table');
+    var tags = new Array('ILF', 'EIF', 'EI', 'EO', 'EQ')
+    
+    $(function () {
+        // init
+        oTable = new TableInit();
+        oTable.Init();
+    });
+    
+    var TableInit = function () {
+        var oTableInit = new Object();
+        //初始化Table
+        oTableInit.Init = function () {
+            $("#table").bootstrapTable({ // 对应table标签的id
+              url: "api/getData", // 获取表格数据的url
+              method: 'post',
+              cache: false, // 设置为 false 禁用 AJAX 数据缓存， 默认为true
+              striped: true,  //表格显示条纹，默认为false
+              pagination: true, // 在表格底部显示分页组件，默认false
+              pageList: [20, 10, -1], // 设置页面可以显示的数据条数
+              pageSize: 20, // 页面数据条数
+              pageNumber: 1, // 首页页码
+              sidePagination: 'server', // 设置为服务器端分页
+              queryParams: function (params) { // 请求服务器数据时发送的参数，可以在这里添加额外的查询参数，返回false则终止请求
+                  return {
+                      pageSize: params.limit, // 每页要显示的数据条数
+                      offset: params.offset, // 每页显示数据的开始行号
+                      fileName: queryFileName
+                  }
+              },
+              sortName: 'id', // 要排序的字段
+              sortOrder: 'desc', // 排序规则
+              columns: [
+                  {
+                      field: 'count_item', // 返回json数据中的name
+                      title: '计数项', // 表格表头显示文字
+                      //editable: true,
+                      align: 'center', // 左右居中
+                      valign: 'middle' // 上下居中
+                  }, {
+                      field: 'count_class',
+                      title: '类别',
+                      editable: {
+                            type: 'select',
+                            title: '类别',
+                            source: tags,
+                        },
+                      align: 'center',
+                      valign: 'middle'
+                  }, {
+                      field: 'count_ufp',
+                      title: 'UFP',
+                      align: 'center',
+                      valign: 'middle',
+                  }, {
+                      field: 'count_reuse',
+                      title: '重用度',
+                      align: 'center',
+                      valign: 'middle',
+                  }, {
+                      field: 'count_modified',
+                      title: '修改类型',
+                      align: 'center',
+                      valign: 'middle',
+                  }, {
+                      field: 'count_us',
+                      title: 'US',
+                      align: 'center',
+                      valign: 'middle',
+                  }, {
+                      field: 'count_remark',
+                      title: '备注',
+                      align: 'center',
+                      valign: 'middle',
+                  }, {
+                      title: "操作",
+                      align: 'center',
+                      valign: 'middle',
+                      width: 160, // 定义列的宽度，单位为像素px
+                    //   formatter: function (value, row, index) {
+                    //       return '<button class="btn btn-primary btn-sm" onclick="del(\'' + row + '\')">删除</button>';
+                    //   }
+                  }
+              ],
+            onLoadSuccess: function(){  //加载成功时执行
+                console.info("加载成功");
+            },
+            onLoadError: function(){  //加载失败时执行
+                console.info("加载数据失败");
+            },
+            onEditableSave: function (field, row, oldValue, $el) {
+            $.ajax({
+                type: "post",
+                url: "api/edit",
+                data: {"row": row, "fileName": queryFileName},
+                dataType: 'JSON',
+                success: function (data, status) {
+                    if (status == "success") {
+                        alert("编辑成功");
+                    }
+                },
+                error: function () {
+                    alert("Error");
+                },
+                complete: function () {
+
+                }
+            });
+            },
+            showExport : true,
+            exportDataType : "all"
+          });
+        }
+        return oTableInit;
+    }
+
+    function totalNameFormatter(data) {
+        return data;
+    }
+
+    $(document).on("ready", function() {
+    $("#file_input").fileinput({
+      language: 'zh',
+      uploadUrl: "/api/uploads",
+      allowedFileExtensions: ['xlsx', 'pdf', 'docx'],//接收的文件后缀
+      showUpload: true, //是否显示上传按钮
+      showCaption: false,//是否显示标题
+      browseClass: "btn btn-primary", //按钮样式     
+      //dropZoneEnabled: false,//是否显示拖拽区域
+      //minImageWidth: 50, //图片的最小宽度
+      //minImageHeight: 50,//图片的最小高度
+      //maxImageWidth: 1000,//图片的最大宽度
+      //maxImageHeight: 1000,//图片的最大高度
+      //maxFileSize: 0,//单位为kb，如果为0表示不限制文件大小
+      //minFileCount: 0,
+      maxFileCount: 1, //表示允许同时上传的最大文件个数
+      enctype: 'multipart/form-data',
+      validateInitialCount:true,
+      previewFileIcon: "<i class='glyphicon glyphicon-king'></i>",
+      msgFilesTooMany: "选择上传的文件数量({n}) 超过允许的最大数值{m}！",
+    }).on("fileuploaded", function(event, data) {
+      console.log(data);
+      queryFileName = data.response;
+      $("#table").bootstrapTable('destroy');
+      oTable.Init();
+      //preds = data.response;
+      //$("#result tbody").empty();
+      //for(var i = 0;i < preds.length;i++) {
+      //    $("#result tbody").append("<tr><td>" + preds[i].count_item + "</td><td>" + preds[i].count_class + "</td><td>"
+      //    + preds[i].count_ufp + "</td><td>" + preds[i].count_reuse + "</td><td>" + preds[i].count_modified + "</td><td>"
+      //    + preds[i].count_us + "</td><td>" + preds[i].count_remark + "</td></tr>")
+      //}
+    });
+    });
+</script>
+{% endblock %}

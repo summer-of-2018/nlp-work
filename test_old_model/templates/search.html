@@ -1,0 +1,39 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+        <link href="/static/css/mystyle.css" rel="stylesheet">
+        <script src="/static/js/jquery.min.js"></script>
+        <title>预测</title>
+        
+    </head>
+
+    <script>
+        function predict() {
+            $("#result").empty();
+            $("#result").show();
+            $.post("/api/predict", {"input": $("form input").val()},
+                function(data) {
+                    console.log(data);
+                    for(var i = 0;i < data.length;i++) {
+                        $("#result").append("<div class=\"result\"><span class=\"num\">"+(i+1)+"</span>"+data[i]+"</div>")
+                    }
+                }, "json");
+        }
+    </script>
+
+    
+    <body>
+        <div>
+            <div id="search" class="search-form">
+                <form role="form" method="post">
+                    <input id="username" type="text" class="search-input">
+                    <button type="button" onclick="predict()" class="search-btn">预测</button>
+                </form>
+            </div>
+            <div id="result" style="display:none">
+                
+            </div>
+        </div>
+    </body>
+</html>

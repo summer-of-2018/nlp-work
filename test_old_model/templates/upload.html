@@ -1,0 +1,76 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <link href="/static/css/fileinput.min.css" media="all" rel="stylesheet" type="text/css" />
+        <script src="https://cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>
+        <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <script src="/static/js/fileinput.min.js"></script>
+        <script src="/static/js/locales/zh.js"></script>
+        <style>
+        body
+        {
+            width: 50%;
+            position: absolute;
+            top: 25%;
+            left: 25%;
+        }
+        </style>
+        <title>文档上传</title>
+        
+    </head>
+
+    <script>
+        $(document).on("ready", function() {
+            $("#file_input").fileinput({
+                language: 'zh',
+                uploadUrl: "/api/uploads",
+                allowedFileExtensions: ['xlsx', 'pdf', 'docx'],//接收的文件后缀
+                showUpload: true, //是否显示上传按钮
+                showCaption: false,//是否显示标题
+                browseClass: "btn btn-primary", //按钮样式     
+                //dropZoneEnabled: false,//是否显示拖拽区域
+                //minImageWidth: 50, //图片的最小宽度
+                //minImageHeight: 50,//图片的最小高度
+                //maxImageWidth: 1000,//图片的最大宽度
+                //maxImageHeight: 1000,//图片的最大高度
+                //maxFileSize: 0,//单位为kb，如果为0表示不限制文件大小
+                //minFileCount: 0,
+                maxFileCount: 10, //表示允许同时上传的最大文件个数
+                enctype: 'multipart/form-data',
+                validateInitialCount:true,
+                previewFileIcon: "<i class='glyphicon glyphicon-king'></i>",
+                msgFilesTooMany: "选择上传的文件数量({n}) 超过允许的最大数值{m}！",
+            }).on("fileuploaded", function(event, data) {
+                console.log(data);//没有走这步
+                e = $("#c_title");
+                console.log(e);
+                $("#c_title").append(data.response.title);
+            });
+        });
+    </script>
+
+    
+    <body>
+        <div class="content">
+            <input id="file_input" name="file_input" type="file" class="file-loading">
+            <div class="panel-group" id="accordion">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a id="c_title" data-toggle="collapse" data-parent="#accordion" 
+                               href="#collapseOne">
+                                
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="collapseOne" class="panel-collapse collapse in">
+                        <div class="panel-body">
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,82 @@
+{% extends "bootstrap/base.html" %}
+
+
+{% block title %}项目评估{% endblock %}
+
+
+{% block head %}
+{{ super() }}
+<meta charset="utf-8">
+<link href="/static/css/bootstrap.min.css" media="all" rel="stylesheet" type="text/css" />
+<link href="/static/css/fileinput.min.css" media="all" rel="stylesheet" type="text/css" />
+<link href="/static/css/bootstrap-table.min.css" media="all" rel="stylesheet" type="text/css" />
+<script src="/static/js/jquery.min.js"></script>
+<script src="/static/js/bootstrap.min.js"></script>
+<script src="/static/js/fileinput.min.js"></script>
+<script src="/static/js/locales/zh.js"></script>
+<script src="/static/js/bootstrap-table.min.js"></script>
+<script src="/static/js/bootstrap-editable.js"></script>
+<script src="/static/js/bootstrap-table-editable.js"></script>
+<script src="/static/js/bootstrap-table-export.js"></script>
+<script src="/static/js/tableExport.js"></script>
+
+<!-- <style>
+body
+{
+    width: 50%;
+    position: absolute;
+    top: 25%;
+    left: 25%;
+}
+</style> -->
+{% endblock %}
+
+{% block navbar %}
+<div class="navbar navbar-inverse" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle"
+            data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">软件项目智能估算系统</a>
+        </div>
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li><a href="/">智能估算</a></li>
+            </ul>
+            <ul class="nav navbar-nav">
+                <ul class="nav navbar-nav">
+                    <li><a href="/predict">功能描述预测</a></li>
+                </ul>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+{% block content %}
+<div class="container">
+    {% for message in get_flashed_messages() %}
+    <div class="alert alert-warning">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        {{message}}
+    </div>
+    {% endfor %}
+    <div class="page-header">
+        {% block content_header %}{% endblock %}
+    </div>
+        {% block content_container %}{% endblock %}
+</div>
+{% endblock %}
+
+
+{% block scripts %}
+{{ super() }}
+{{ moment.include_moment() }}
+{{ moment.lang("zh-CN") }} 
+{% endblock %}
