@@ -5,18 +5,22 @@ import pickle
 import platform
 
 
-def load_data():
+def load_data(create_vocab=True, vocab_dir='model/config.pkl'):
     train = _parse_data(open('data/train_data_e.data', 'rb'))
     test = _parse_data(open('data/test_data_e.data', 'rb'))
-    #print ("train", train)
-    word_counts = Counter(row[0].lower() for sample in train for row in sample)
-    vocab = [w for w, f in iter(word_counts.items()) if f >= 2]
-    chunk_tags = ['O', 'B-EI', 'I-EI', 'B-EO', 'I-EO', 'B-EQ', 'I-EQ', 'B-ILF', 'I-ILF', 'B-EIF', 'I-EIF']
+    # print("train", train)
+    if create_vocab:
+        # 从数据集中生成新vocab列表
+        word_counts = Counter(row[0].lower() for sample in train for row in sample)
+        vocab = [w for w, f in iter(word_counts.items()) if f >= 2]
+        chunk_tags = ['O', 'B-EI', 'I-EI', 'B-EO', 'I-EO', 'B-EQ', 'I-EQ', 'B-ILF', 'I-ILF', 'B-EIF', 'I-EIF']
 
-    # save initial config data
-    with open('model/config.pkl', 'wb') as outp:
-        pickle.dump((vocab, chunk_tags), outp)
-
+        # save initial config data
+        with open(vocab_dir, 'wb') as outp:
+            pickle.dump((vocab, chunk_tags), outp)
+    else:
+        with open(vocab_dir, 'rb') as inp:
+            (vocab, chunk_tags) = pickle.load(inp)
     train = _process_data(train, vocab, chunk_tags)
     test = _process_data(test, vocab, chunk_tags)
     return train, test, (vocab, chunk_tags)
@@ -75,3 +79,14 @@ def process_data(data, vocab, maxlen=100):
     x = np.array([x])
 
     return x, length
+
+if __name__ == '__main__':
+    train = _parse_data(open('data/train_data_e.data', 'rb'))
+    test = _parse_data(open('data/test_data_e.data', 'rb'))
+    # print ("train", train)
+    word_counts = Counter(row[0].lower() for sample in train for row in sample)
+    vocab1 = set([w for w, f in iter(word_counts.items()) if f >= 2])
+    word_counts = Counter(row[0].lower() for sample in test for row in sample)
+    vocab2 = set([w for w, f in iter(word_counts.items()) if f >= 2])
+    vocab3 = vocab1&vocab2
+    print(len(vocab1),len(vocab2),len(vocab3))
