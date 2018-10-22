@@ -25,5 +25,5 @@ model.load_weights('model/crf_w2v.h5')
 
 # train model
 model.fit(train_x, train_y,batch_size=16,epochs=EPOCHS, validation_data=[test_x, test_y],
-          callbacks=[keras.callbacks.TensorBoard(log_dir='./logs', histogram_freq=1, embeddings_freq=1)])
+          callbacks=[keras.callbacks.TensorBoard(log_dir='./logs', histogram_freq=1, embeddings_freq=0)])
 model.save('model/crf_w2v_finetune.h5')
