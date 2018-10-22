@@ -11,7 +11,7 @@ model, (train_x, train_y), (test_x, test_y) = bilsm_crf_model.create_model()
 
 # load embedding weights
 embeddings_index = dict()  # 所有的词向量
-with open(os.path.join(WORD2VEC_PATH, 'merge_sgns_bigram_char300.txt')) as f:
+with open(os.path.join(WORD2VEC_PATH, 'merge_sgns_bigram_char300.txt'), encoding='utf-8') as f:
     i = 1
     for line in f:
         if i % 10000 == 1:
@@ -54,5 +54,5 @@ model.compile('adam', loss=crf.loss_function, metrics=[crf.accuracy])
 model.summary()
 
 # train model
-model.fit(train_x, train_y,batch_size=128,epochs=EPOCHS, validation_data=[test_x, test_y])
-model.save('model/crf_bs128.h5')
+model.fit(train_x, train_y,batch_size=16,epochs=EPOCHS, validation_data=[test_x, test_y])
+model.save('model/crf_w2v.h5')
