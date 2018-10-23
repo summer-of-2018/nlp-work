@@ -1,13 +1,20 @@
-import bilsm_crf_model
+import rnn
 import numpy as np
 import os
 import pickle
+import process_data
 
-EPOCHS = 10
+EPOCHS = 100
 WORD2VEC_PATH = '../'
 EMBEDDING_DIM = 300
 
-model, (train_x, train_y), (test_x, test_y) = bilsm_crf_model.create_model()
+
+(train_x, train_y), (test_x, test_y), (vocab, chunk_tags) = process_data.load_data(
+    create_vocab=True, vocab_dir='model/config_w2v_tc.pkl')
+train_x, train_y = process_data.y2one_hot(train_x, train_y)
+test_x, test_y = process_data.y2one_hot(test_x, test_y)
+
+model = rnn.create_model(len(vocab))
 
 # load embedding weights
 embeddings_index = dict()  # 所有的词向量
@@ -50,10 +57,10 @@ del embeddings_index
 
 model.layers[0].trainable = False
 model.layers[0].set_weights([embedding_matrix])
-crf = model.layers[-1]
-model.compile('adam', loss=crf.loss_function, metrics=[crf.accuracy])
+model.compile('adam', loss='categorical_crossentropy', metrics=['accuracy'])
 model.summary()
 
 # train model
-model.fit(train_x, train_y,batch_size=16,epochs=EPOCHS, validation_data=[test_x, test_y])
-model.save('model/crf_w2v.h5')
+model.fit(train_x, train_y,batch_size=32,epochs=EPOCHS, validation_data=[test_x, test_y],
+          callbacks=[keras.callbacks.TensorBoard(log_dir='./logs', histogram_freq=0, embeddings_freq=0)])
+model.save('model/crf_w2v_tc.h5')

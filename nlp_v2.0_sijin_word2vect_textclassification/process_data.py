@@ -1,6 +1,7 @@
 import numpy as np
 from collections import Counter
 from keras.preprocessing.sequence import pad_sequences
+import keras
 import pickle
 import platform
 
@@ -80,16 +81,36 @@ def process_data(data, vocab, maxlen=100):
 
     return x, length
 
+
+def y2one_hot(x, y_padded):
+    y_max = np.amax(y_padded, axis=1)
+    sample_filter = np.where(y_max>0)
+
+    x2 = x[sample_filter]
+    y2 = y_max[sample_filter]
+    y2[(y2%2)==1] += 1
+    y2 = y2/2 - 1
+    y2 = keras.utils.to_categorical(y2, num_classes=None)
+    return x2, y2
+
+
 if __name__ == '__main__':
-    train = _parse_data(open('data/train_data_e.data', 'rb'))
-    test = _parse_data(open('data/test_data_e.data', 'rb'))
-    # print ("train", train)
-    print(len(train))
-    print(len(test))
-    print(train[0])
-    word_counts = Counter(row[0].lower() for sample in train for row in sample)
-    vocab1 = set([w for w, f in iter(word_counts.items()) if f >= 2])
-    word_counts = Counter(row[0].lower() for sample in test for row in sample)
-    vocab2 = set([w for w, f in iter(word_counts.items()) if f >= 2])
-    vocab3 = vocab1&vocab2
-    print(len(vocab1),len(vocab2),len(vocab3))
+    # train = _parse_data(open('data/train_data_e.data', 'rb'))
+    # test = _parse_data(open('data/test_data_e.data', 'rb'))
+    # # print ("train", train)
+    # print(len(train))
+    # print(len(test))
+    # print(train[0])
+    # word_counts = Counter(row[0].lower() for sample in train for row in sample)
+    # vocab1 = set([w for w, f in iter(word_counts.items()) if f >= 2])
+    # word_counts = Counter(row[0].lower() for sample in test for row in sample)
+    # vocab2 = set([w for w, f in iter(word_counts.items()) if f >= 2])
+    # vocab3 = vocab1&vocab2
+    # print(len(vocab1),len(vocab2),len(vocab3))
+
+    (train_x, train_y), (test_x, test_y), (vocab, chunk_tags) = load_data(
+        create_vocab=False, vocab_dir='model/config_w2v.pkl')
+    train_x, train_y = y2one_hot(train_x, train_y)
+    print(len(train_y))
+    print(len(train_x))
+    print(train_y[0:5])
