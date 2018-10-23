@@ -11,6 +11,7 @@ model, (train_x, train_y), (test_x, test_y) = bilsm_crf_model.create_model()
 
 # load embedding weights
 embeddings_index = dict()  # 所有的词向量
+# https://github.com/Embedding/Chinese-Word-Vectors
 with open(os.path.join(WORD2VEC_PATH, 'merge_sgns_bigram_char300.txt'), encoding='utf-8') as f:
     i = 1
     for line in f:
@@ -20,7 +21,7 @@ with open(os.path.join(WORD2VEC_PATH, 'merge_sgns_bigram_char300.txt'), encoding
         # try:
         values = line.split()
         if len(values) != 301:
-            print(i, '!=301')
+            print(i, '!=301')  # split维数有错
             print(line)
             continue
         word = values[0]
