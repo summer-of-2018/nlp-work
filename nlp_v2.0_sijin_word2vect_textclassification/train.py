@@ -3,8 +3,9 @@ import numpy as np
 import os
 import pickle
 import process_data
+import keras
 
-EPOCHS = 100
+EPOCHS = 10
 WORD2VEC_PATH = '../'
 EMBEDDING_DIM = 300
 
@@ -63,4 +64,14 @@ model.summary()
 # train model
 model.fit(train_x, train_y,batch_size=32,epochs=EPOCHS, validation_data=[test_x, test_y],
           callbacks=[keras.callbacks.TensorBoard(log_dir='./logs', histogram_freq=0, embeddings_freq=0)])
+
+
+model.layers[0].trainable = True
+model.compile('adam', loss='categorical_crossentropy', metrics=['accuracy'])
+model.summary()
+model.fit(train_x, train_y,batch_size=32,epochs=EPOCHS, validation_data=[test_x, test_y],
+          callbacks=[keras.callbacks.TensorBoard(log_dir='./logs', histogram_freq=0, embeddings_freq=0)])
+
+
+
 model.save('model/crf_w2v_tc.h5')
