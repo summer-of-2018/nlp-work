@@ -86,7 +86,7 @@ def y2one_hot(x, y_padded):
     y_max = np.amax(y_padded, axis=1)
     sample_filter = np.where(y_max>0)
 
-    x2 = x[sample_filter]
+    x2 = x[sample_filter, :]
     y2 = y_max[sample_filter]
     y2[(y2%2)==1] += 1
     y2 = y2/2 - 1
@@ -109,8 +109,12 @@ if __name__ == '__main__':
     # print(len(vocab1),len(vocab2),len(vocab3))
 
     (train_x, train_y), (test_x, test_y), (vocab, chunk_tags) = load_data(
-        create_vocab=False, vocab_dir='model/config_w2v.pkl')
+        create_vocab=False, vocab_dir='model/config_w2v_tc.pkl')
     train_x, train_y = y2one_hot(train_x, train_y)
+    test_x, test_y = y2one_hot(test_x, test_y)
     print(len(train_y))
     print(len(train_x))
     print(train_y[0:5])
+    print(train_x.shape)
+    print(test_x.shape)
+    print(train_x[0:5])
