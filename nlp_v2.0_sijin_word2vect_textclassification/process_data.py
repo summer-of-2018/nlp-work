@@ -84,9 +84,10 @@ def process_data(data, vocab, maxlen=100):
 
 def y2one_hot(x, y_padded):
     y_max = np.amax(y_padded, axis=1)
+    y_max.resize((len(y_max),))  # crf层要求y是三维[sample,token,1]的，这里确保y_max是一维的
     sample_filter = np.where(y_max>0)
 
-    x2 = x[sample_filter, :]
+    x2 = x[sample_filter]
     y2 = y_max[sample_filter]
     y2[(y2%2)==1] += 1
     y2 = y2/2 - 1
@@ -110,6 +111,7 @@ if __name__ == '__main__':
 
     (train_x, train_y), (test_x, test_y), (vocab, chunk_tags) = load_data(
         create_vocab=False, vocab_dir='model/config_w2v_tc.pkl')
+    print('_process_data-x:', train_x.shape)
     train_x, train_y = y2one_hot(train_x, train_y)
     test_x, test_y = y2one_hot(test_x, test_y)
     print(len(train_y))
