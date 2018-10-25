@@ -90,9 +90,70 @@ def y2one_hot(x, y_padded):
     x2 = x[sample_filter]
     y2 = y_max[sample_filter]
     y2[(y2%2)==1] += 1
-    y2 = y2/2 - 1
+    y2 = y2/2 - 1  # 把y2变成['EI', 'EO', 'EQ', 'ILF', 'EIF']的index
     y2 = keras.utils.to_categorical(y2, num_classes=None)
     return x2, y2
+
+
+def load_sentences(create_vocab=True, vocab_dir='model/config.pkl', maxlen=None):
+    des1, cou1, lab1 = read_sentences_file('实验/summary_1.txt')
+    des2, cou2, lab2 = read_sentences_file('实验/summary_2.txt')
+    train_sentences = des1
+    train_label = lab1
+    test_sentences = des2
+    test_label = lab2
+
+    # print("train", train)
+    if create_vocab:
+        # 从数据集中生成新vocab列表
+        word_counts = Counter(token for sentence in train_sentences for token in sentence)
+        vocab = [w for w, f in iter(word_counts.items()) if f >= 2]
+        # chunk_tags = ['O', 'B-EI', 'I-EI', 'B-EO', 'I-EO', 'B-EQ', 'I-EQ', 'B-ILF', 'I-ILF', 'B-EIF', 'I-EIF']
+        chunk_tags = ['EI', 'EO', 'EQ', 'ILF', 'EIF']
+
+        # save initial config data
+        with open(vocab_dir, 'wb') as outp:
+            pickle.dump((vocab, chunk_tags), outp)
+    else:
+        with open(vocab_dir, 'rb') as inp:
+            (vocab, chunk_tags) = pickle.load(inp)
+    train = _process_sentences(train_sentences, train_label, vocab, chunk_tags, maxlen=maxlen, onehot=True)
+    test = _process_sentences(test_sentences, test_label, vocab, chunk_tags, maxlen=maxlen, onehot=True)
+    return train, test, (vocab, chunk_tags)
+
+
+def read_sentences_file(fname):
+    des = []  # 功能单元描述
+    cou = []  # 计数项
+    lab = []  # 类别
+
+    with open(fname,'r',encoding='utf-8') as f:
+        for line in f.readlines():
+            t = line.split('\t')
+            if len(t)<3:
+                continue
+            des.append(t[0].strip())
+            cou.append(t[1].strip())
+            lab.append(t[2].strip())
+    return des, cou, lab
+
+
+def _process_sentences(sentences, labels, vocab, chunk_tags, maxlen=None, onehot=False):
+    if maxlen is None:
+        maxlen = max(len(s) for s in data)
+    word2idx = dict((w, i+1) for i, w in enumerate(vocab))  # 以前从0开始，修正为从1开始
+    # x = [[word2idx.get(w.lower(), 1) for w in s] for s in sentences]  # set to <unk> (index 1) if not in vocab
+    x = [[word2idx.get(w.lower()) for w in s if w in word2idx] for s in sentences]  # 删掉不在词库里的词
+
+    y_chunk = [chunk_tags.index(l) for l in labels]
+
+    x = pad_sequences(x, maxlen)  # left padding
+
+    # y_chunk = pad_sequences(y_chunk, maxlen, value=-1)
+
+    if onehot:
+        y_chunk = np.eye(len(chunk_tags), dtype='float32')[y_chunk]
+    return x, y_chunk
 
 
 if __name__ == '__main__':

@@ -10,11 +10,15 @@ WORD2VEC_PATH = '../'
 EMBEDDING_DIM = 300
 maxlen=250
 
-(train_x, train_y), (test_x, test_y), (vocab, chunk_tags) = process_data.load_data(
+(train_x, train_y), (test_x, test_y), (vocab, chunk_tags) = process_data.load_sentences(
     create_vocab=True, vocab_dir='model/config_w2v_tc.pkl', maxlen=maxlen)
-train_x, train_y = process_data.y2one_hot(train_x, train_y)
-test_x, test_y = process_data.y2one_hot(test_x, test_y)
+# train_x, train_y = process_data.y2one_hot(train_x, train_y)
+# test_x, test_y = process_data.y2one_hot(test_x, test_y)
 
+# print(train_x[:5])
+# print(train_y[:5])
+# print(test_x[:5])
+# print(test_y[:5])
 model = cnn.create_model(maxlen, len(vocab))
 
 # load embedding weights
