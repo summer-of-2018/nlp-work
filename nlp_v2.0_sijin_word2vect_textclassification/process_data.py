@@ -6,7 +6,7 @@ import pickle
 import platform
 
 
-def load_data(create_vocab=True, vocab_dir='model/config.pkl'):
+def load_data(create_vocab=True, vocab_dir='model/config.pkl', maxlen=None):
     train = _parse_data(open('data/train_data_e.data', 'rb'))
     test = _parse_data(open('data/test_data_e.data', 'rb'))
     # print("train", train)
@@ -22,8 +22,8 @@ def load_data(create_vocab=True, vocab_dir='model/config.pkl'):
     else:
         with open(vocab_dir, 'rb') as inp:
             (vocab, chunk_tags) = pickle.load(inp)
-    train = _process_data(train, vocab, chunk_tags)
-    test = _process_data(test, vocab, chunk_tags)
+    train = _process_data(train, vocab, chunk_tags,maxlen=maxlen)
+    test = _process_data(test, vocab, chunk_tags,maxlen=maxlen)
     return train, test, (vocab, chunk_tags)
 
 
