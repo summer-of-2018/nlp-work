@@ -140,7 +140,7 @@ def read_sentences_file(fname):
 
 def _process_sentences(sentences, labels, vocab, chunk_tags, maxlen=None, onehot=False):
     if maxlen is None:
-        maxlen = max(len(s) for s in data)
+        maxlen = max(len(s) for s in sentences)
     word2idx = dict((w, i+1) for i, w in enumerate(vocab))  # 以前从0开始，修正为从1开始
     # x = [[word2idx.get(w.lower(), 1) for w in s] for s in sentences]  # set to <unk> (index 1) if not in vocab
     x = [[word2idx.get(w.lower()) for w in s if w in word2idx] for s in sentences]  # 删掉不在词库里的词

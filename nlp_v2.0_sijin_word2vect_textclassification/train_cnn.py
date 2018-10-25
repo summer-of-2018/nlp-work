@@ -46,8 +46,8 @@ with open(os.path.join(WORD2VEC_PATH, 'merge_sgns_bigram_char300.txt'), encoding
 print('Found %s word vectors.' % len(embeddings_index))
 
 
-with open('model/config.pkl', 'rb') as inp:
-    (vocab, chunk_tags) = pickle.load(inp)
+# with open('model/config.pkl', 'rb') as inp:
+#     (vocab, chunk_tags) = pickle.load(inp)
 word2idx = dict((w, i+1) for i, w in enumerate(vocab))
 
 
