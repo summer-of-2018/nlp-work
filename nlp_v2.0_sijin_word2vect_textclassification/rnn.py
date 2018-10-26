@@ -13,7 +13,7 @@ num_classes = 5
 def create_model(vocab_size):
     model = Sequential()
     model.add(Embedding(vocab_size + 1, EMBED_DIM, mask_zero=True))  # 修改了
-    model.add(Bidirectional(LSTM(BiRNN_UNITS_1 // 2, return_sequences=True)))
+    # model.add(Bidirectional(LSTM(BiRNN_UNITS_1 // 2, return_sequences=True)))
     model.add(Bidirectional(LSTM(BiRNN_UNITS_2 // 2, return_sequences=False)))
     model.add(Dense(100, activation='relu'))
     model.add(Dense(num_classes, activation='softmax'))
