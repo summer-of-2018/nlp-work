@@ -22,8 +22,8 @@ ILF_count_f = 0
 
 row_idx = 1
 
-outf = open(test_filename, 'w', encoding='utf-8', errors='ignore')
-with open('实验/summary_2.txt', 'r', encoding='utf-8', errors='ignore') as inf:
+outf = open('实验/test_result.txt', 'w', encoding='utf-8', errors='ignore')
+with open(test_filename, 'r', encoding='utf-8', errors='ignore') as inf:
     for line in inf.readlines():
         line = line.strip()
         print (row_idx, "line:", line)
