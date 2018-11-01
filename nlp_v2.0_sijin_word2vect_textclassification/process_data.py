@@ -170,14 +170,20 @@ if __name__ == '__main__':
     # vocab3 = vocab1&vocab2
     # print(len(vocab1),len(vocab2),len(vocab3))
 
-    (train_x, train_y), (test_x, test_y), (vocab, chunk_tags) = load_data(
-        create_vocab=False, vocab_dir='model/config_w2v_tc.pkl')
-    print('_process_data-x:', train_x.shape)
-    train_x, train_y = y2one_hot(train_x, train_y)
-    test_x, test_y = y2one_hot(test_x, test_y)
-    print(len(train_y))
-    print(len(train_x))
-    print(train_y[0:5])
-    print(train_x.shape)
-    print(test_x.shape)
-    print(train_x[0:5])
+    # (train_x, train_y), (test_x, test_y), (vocab, chunk_tags) = load_data(
+    #     create_vocab=False, vocab_dir='model/config_w2v_tc.pkl')
+    # print('_process_data-x:', train_x.shape)
+    # train_x, train_y = y2one_hot(train_x, train_y)
+    # test_x, test_y = y2one_hot(test_x, test_y)
+    # print(len(train_y))
+    # print(len(train_x))
+    # print(train_y[0:5])
+    # print(train_x.shape)
+    # print(test_x.shape)
+    # print(train_x[0:5])
+
+    # train = _parse_data(open('data/test_data_e.data', 'rb'))
+    # d = [[row[0].lower() for row in sample] for sample in train]
+    # d = [''.join(row)+'\n' for row in d]
+    # with open('data/test_data_e.txt','w',encoding='utf-8') as fw:
+    #     fw.writelines(d)

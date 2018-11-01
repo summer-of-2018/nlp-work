@@ -2,6 +2,9 @@ import bilsm_crf_model
 import process_data
 import numpy as np
 
+test_filename = '实验/summary_2.txt'
+# test_filename = '实验/summary_test.txt'
+
 model, (vocab, chunk_tags) = bilsm_crf_model.create_model(train=False)
 count_num = 0
 count_num2 = 0
@@ -20,7 +23,7 @@ ILF_count_f = 0
 row_idx = 1
 
 outf = open('实验/test_result.txt', 'w', encoding='utf-8', errors='ignore')
-with open('实验/summary_2.txt', 'r', encoding='utf-8', errors='ignore') as inf:
+with open(test_filename, 'r', encoding='utf-8', errors='ignore') as inf:
     for line in inf.readlines():
         line = line.strip()
         print (row_idx, "line:", line)
