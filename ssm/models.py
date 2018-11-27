@@ -1,6 +1,6 @@
 import pandas
 import jieba
-import gensim
+# import gensim
 import numpy as np
 from keras.preprocessing.sequence import pad_sequences
 from keras.utils import to_categorical

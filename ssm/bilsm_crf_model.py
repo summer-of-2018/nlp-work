@@ -73,8 +73,8 @@ def predict_sentences(sentences):
                 if t in {1, 3, 5, 7, 9}:
                     _count_items[flag] += ' '
                 _count_items[flag] += s
-            print("result_tags:", flag)
-            print(_count_items)
+            # print("result_tags:", flag)
+            # print(_count_items)
             tags.append(flag)
             count_items.append(_count_items[flag])
     return tags, count_items

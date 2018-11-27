@@ -1,4 +1,4 @@
-from flask import Flask, render_template, jsonify, request, current_app
+from flask import Flask, render_template, jsonify, request, current_app, make_response
 from flask_bootstrap import Bootstrap
 from werkzeug import secure_filename
 import os
@@ -153,6 +153,7 @@ def get_data():
         return jsonify(data)
     return jsonify({})
 
+
 @app.route("/api/edit", methods=["GET", "POST"])
 def edit_data():
     if request.method == 'POST':
@@ -167,6 +168,24 @@ def edit_data():
         df.to_csv(current_app.config['UPLOAD_FOLDER'] + '/' + fileName, index=False, sep=',')
         return jsonify({})
     return jsonify({})
+
+
+@app.route("/download/<filename>", methods=['GET'])
+def download_csv(filename):
+    # response = make_response(send_from_directory(directory, filename, as_attachment=True))
+    # response.headers["Content-Disposition"] = "attachment; filename={}".format(file_name.encode().decode('latin-1'))
+    # csv = '1,2,3\n4,5,6\n'
+    with open(current_app.config['UPLOAD_FOLDER'] + '/' + filename, 'r') as f:
+        lines = f.readlines()
+    res = []
+    for line in lines:
+        cols = line.strip().split(',')
+        res.append(','.join([cols[2], cols[1]]))  # 删除csv每行第一列（id）
+    res[0] = '计数项,类别,UFP,重用度,修改类型,US,备注,操作'
+    response = make_response('\n'.join(res))
+    response.mimetype="text/csv"
+    response.headers["Content-disposition"] = "attachment; filename=tableExport.csv"
+    return response
 
 if __name__ == "__main__":
     app.run(debug=False, host='0.0.0.0', port=8888)
