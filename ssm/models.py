@@ -1,6 +1,6 @@
 import pandas
 import jieba
-import gensim
+# import gensim
 import numpy as np
 from keras.preprocessing.sequence import pad_sequences
 from keras.utils import to_categorical
@@ -120,6 +120,7 @@ if __name__ == '__main__':
     inp = '制定调查问卷信息，包括投票主题、时间、调研题目等信息'
     tag = 'EIF'
     sentence = []
+    model.summary()
     sentence.append(cut_sentence(inp))
     print(sentence)
     x = predict_preprocess(sentence)
