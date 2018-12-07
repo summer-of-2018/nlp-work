@@ -182,7 +182,7 @@ def download_csv(filename):
         cols = line.strip().split(',')
         res.append(','.join([cols[2], cols[1]]))  # 删除csv每行第一列（id）
     res[0] = '计数项,类别,UFP,重用度,修改类型,US,备注,操作'
-    response = make_response('\n'.join(res))
+    response = make_response('\ufeff' + '\n'.join(res))
     response.mimetype="text/csv"
     response.headers["Content-disposition"] = "attachment; filename=tableExport.csv"
     return response
